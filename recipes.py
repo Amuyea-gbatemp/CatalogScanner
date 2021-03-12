@@ -19,6 +19,7 @@ CARD_TYPES: Dict[Tuple[int, int, int], str] = {
     (232, 215, 188): 'blue',
     (109, 158, 183): 'brick',
     (61, 103, 143): 'brown',
+    (187, 242, 247): 'cream',
     (109, 107, 106): 'dark gray',
     (118, 200, 211): 'gold',
     (124, 226, 154): 'green',
@@ -170,6 +171,8 @@ def _is_duplicate_cards(all_cards: List[numpy.ndarray], new_cards: List[numpy.nd
         if old_concat is None:
             continue
         if cv2.absdiff(new_concat, old_concat).mean() < 10:
+            # Replace the old set with the new set.
+            all_cards[ind] = new_cards
             return True
     return False
 
@@ -186,8 +189,12 @@ def _get_recipe_db() -> Dict[str, List[RecipeCard]]:
         recipe_db[card_type].append(recipe)
 
     # Merge orange, pink and yellow since they are often mixed up.
-    merged = recipe_db['orange'] + recipe_db['pink'] + recipe_db['yellow']
-    recipe_db['orange'] = recipe_db['pink'] = recipe_db['yellow'] = merged
+    merged = recipe_db['orange'] + recipe_db['gold'] + recipe_db['yellow']
+    recipe_db['orange'] = recipe_db['gold'] = recipe_db['yellow'] = merged
+
+    # Merge beige and cream as they are also very close
+    merged = recipe_db['beige'] + recipe_db['cream']
+    recipe_db['beige'] = recipe_db['cream'] = merged
 
     return recipe_db
 
